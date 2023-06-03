@@ -46,11 +46,14 @@ func GetProductList() []*Product {
 
 type Products []*Product
 
-func ( pr *Products ) ToJson(w io.Writer) error{
-	e:=json.NewEncoder(w)
+func (pr *Products) ToJson(w io.Writer) error {
+	e := json.NewEncoder(w)
 	return e.Encode(pr)
 }
 
-func GetProductList2() Products{
+func GetProductList2() Products {
 	return Productlist
+}
+func (pr *Product) FromJson(b []byte) error{
+	return json.Unmarshal(b,&pr)
 }
