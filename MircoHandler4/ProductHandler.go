@@ -73,4 +73,5 @@ func (productHandlerList *ProductHandlerList) addProduct(rw http.ResponseWriter,
 		rw.Write([]byte("Request processed successfully"))
 	}
 	productHandlerList.l.Printf("Product=#%v", prod)
+	prod.AddProductToList()
 }

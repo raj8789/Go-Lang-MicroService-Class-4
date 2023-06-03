@@ -57,3 +57,12 @@ func GetProductList2() Products {
 func (pr *Product) FromJson(b []byte) error{
 	return json.Unmarshal(b,&pr)
 }
+func (pr *Product) AddProductToList(){
+	id:=getNextId()
+	pr.ID=id
+	Productlist=append(Productlist, pr)
+}
+func getNextId() int{
+	pl:=Productlist[len(Productlist)-1]
+	return pl.ID+1
+}
