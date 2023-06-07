@@ -2,6 +2,7 @@ package data
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"time"
 )
@@ -54,15 +55,35 @@ func (pr *Products) ToJson(w io.Writer) error {
 func GetProductList2() Products {
 	return Productlist
 }
-func (pr *Product) FromJson(b []byte) error{
-	return json.Unmarshal(b,&pr)
+func (pr *Product) FromJson(b []byte) error {
+	return json.Unmarshal(b, &pr)
 }
-func (pr *Product) AddProductToList(){
-	id:=getNextId()
-	pr.ID=id
-	Productlist=append(Productlist, pr)
+func (pr *Product) AddProductToList() {
+	id := getNextId()
+	pr.ID = id
+	Productlist = append(Productlist, pr)
 }
-func getNextId() int{
-	pl:=Productlist[len(Productlist)-1]
-	return pl.ID+1
+func getNextId() int {
+	pl := Productlist[len(Productlist)-1]
+	return pl.ID + 1
+}
+
+var ErrProductnotFound = fmt.Errorf("Product Not Found")
+
+func UpdateProduct(id int, prod *Product) error {
+	fp, fid, e := finProduct(id)
+	if e != nil {
+		return e
+	}
+	fp.ID = id
+	Productlist[fid] = prod
+	return nil
+}
+func finProduct(id int) (*Product, int, error) {
+	for i, pr := range Productlist {
+		if pr.ID == id {
+			return pr, i, nil
+		}
+	}
+	return nil, -1, ErrProductnotFound
 }

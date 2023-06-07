@@ -4,6 +4,8 @@ import (
 	data "MicroData"
 	"encoding/json"
 	"fmt"
+	"regexp"
+	"strconv"
 
 	"io/ioutil"
 
@@ -45,6 +47,47 @@ func (productHandlerList *ProductHandlerList) ServeHTTP(rw http.ResponseWriter, 
 	//**************************** post request to add a Product in Productlist *****************************
 	if re.Method == http.MethodPost {
 		productHandlerList.addProduct(rw, re)
+	}
+
+	//**************************** put request to update a Product in productlist ***************************
+	if re.Method == http.MethodPut {
+		r := regexp.MustCompile(`/([0-9]+)`)
+		g := r.FindAllStringSubmatch(re.URL.Path, -1)
+		fmt.Println("Value of g=%s",g)
+		if len(g) != 1 {
+			http.Error(rw, "Invalid Url", http.StatusBadRequest)
+			return
+		}
+		if len(g[0]) != 2 {
+			http.Error(rw, "Invalid Url", http.StatusBadRequest)
+			return
+		}
+		fmt.Println("Value of g[0]=%s",g[0])
+		idString := g[0][1]
+		fmt.Println("Value of g[0][0]=%s",g[0][0])
+		fmt.Println("Value of g[0][1]=%s",g[0][1])
+		id, _ := strconv.Atoi(idString)
+		productHandlerList.l.Println("Id REceived", id)
+		productHandlerList.updateProduct(id, rw, re)
+	}
+}
+func (ProductHandlerList *ProductHandlerList) updateProduct(id int, rw http.ResponseWriter, re *http.Request) {
+	prod := data.Product{}
+	body, err := ioutil.ReadAll(re.Body)
+	if err != nil {
+		rw.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintln(rw, "Error reading request body:", err)
+		return
+	}
+	fmt.Printf("Hiii Body Of Request=%s", string(body))
+	err = prod.FromJson(body)
+	if err != nil {
+		http.Error(rw, "Unable to Decode Json to Go Value", http.StatusBadRequest)
+	}
+	err = data.UpdateProduct(id, &prod)
+	if err != nil {
+		rw.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintln(rw, "Product Not Found To Update:", err)
 	}
 }
 func (productHandlerList *ProductHandlerList) getProducts(rw http.ResponseWriter, re *http.Request) {
