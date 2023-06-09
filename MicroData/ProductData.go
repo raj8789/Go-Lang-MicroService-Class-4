@@ -76,6 +76,7 @@ func UpdateProduct(id int, prod *Product) error {
 		return e
 	}
 	fp.ID = id
+	prod.ID = id
 	Productlist[fid] = prod
 	return nil
 }
