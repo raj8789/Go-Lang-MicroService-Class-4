@@ -53,7 +53,7 @@ func (productHandlerList *ProductHandlerList) ServeHTTP(rw http.ResponseWriter, 
 	if re.Method == http.MethodPut {
 		r := regexp.MustCompile(`/([0-9]+)`)
 		g := r.FindAllStringSubmatch(re.URL.Path, -1)
-		fmt.Println("Value of g=%s",g)
+		fmt.Println("Value of g=%s", g)
 		if len(g) != 1 {
 			http.Error(rw, "Invalid Url", http.StatusBadRequest)
 			return
@@ -62,10 +62,10 @@ func (productHandlerList *ProductHandlerList) ServeHTTP(rw http.ResponseWriter, 
 			http.Error(rw, "Invalid Url", http.StatusBadRequest)
 			return
 		}
-		fmt.Println("Value of g[0]=%s",g[0])
+		fmt.Println("Value of g[0]=%s", g[0])
 		idString := g[0][1]
-		fmt.Println("Value of g[0][0]=%s",g[0][0])
-		fmt.Println("Value of g[0][1]=%s",g[0][1])
+		fmt.Println("Value of g[0][0]=%s", g[0][0])
+		fmt.Println("Value of g[0][1]=%s", g[0][1])
 		id, _ := strconv.Atoi(idString)
 		productHandlerList.l.Println("Id REceived", id)
 		productHandlerList.updateProduct(id, rw, re)
