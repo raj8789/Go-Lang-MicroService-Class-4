@@ -141,9 +141,19 @@ func (productHandlerList *ProductHandlerList) MiddlewareProductValidation(next h
 		fmt.Println("Hiii Error Message=%s", err)
 		if err != nil {
 			http.Error(rw, "Unable to Decode Json to Go Value", http.StatusBadRequest)
+			return
+		} else {
+			//rw.WriteHeader(http.StatusOK)
+			rw.Write([]byte("Request processed For Decode Done successfully"))
+		}
+		err=prod.ValidateProduct()
+		if err != nil {
+			rw.WriteHeader(http.StatusBadRequest)
+			http.Error(rw, "Unable to Validate Product Data Value", http.StatusBadRequest)
+			return
 		} else {
 			rw.WriteHeader(http.StatusOK)
-			rw.Write([]byte("Request processed successfully"))
+			rw.Write([]byte("Request processed For Validation of Product Done successfully"))
 		}
 		//ctx:=re.Context().WithValue(re.Context,KeyProduct{},prod)
 		ctx := context.WithValue(re.Context(), "myProduct", prod)
